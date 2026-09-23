@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Facial Expression Study</title>
+<style>
+  :root{
+    --bg:#f6f6f4; --card:#fff; --ink:#1c1c1a; --muted:#6b6b66; --line:#e2e2dd;
+    --accent:#2f6f5e; --accent-ink:#fff; --bad:#a33;
+    color-scheme:light;
+  }
+  @media (prefers-color-scheme:dark){:root{
+    --bg:#16161a; --card:#1f1f24; --ink:#ecece8; --muted:#a0a09a; --line:#33333a;
+    --accent:#5fb89d; --accent-ink:#10251f; --bad:#e08585; color-scheme:dark;}}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:16px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+  .wrap{max-width:820px;margin:0 auto;padding:24px 18px 64px}
+  h1{font-size:23px;margin:0 0 8px} h2{font-size:18px;margin:0 0 10px}
+  p{margin:0 0 12px} ul{margin:0 0 14px;padding-left:22px} li{margin:4px 0}
+  .muted{color:var(--muted)} .sm{font-size:14px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:22px;margin:16px 0}
+  button{font:inherit;cursor:pointer;border-radius:9px;border:1px solid var(--line);
+    background:var(--card);color:var(--ink);padding:11px 18px}
+  button:hover:not(:disabled){border-color:var(--accent)}
+  button:disabled{opacity:.4;cursor:not-allowed}
+  .primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);font-weight:600}
+  video{width:100%;max-width:500px;aspect-ratio:1/1;background:#000;border-radius:10px;display:block;margin:0 auto}
+  .check-box{max-width:500px;aspect-ratio:2/1;margin:0 auto;border-radius:10px;border:2px dashed var(--line);
+    display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;font-size:18px}
+  .choices{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+  .choices.sub{grid-template-columns:repeat(3,1fr);margin-top:10px}
+  @media(max-width:560px){.choices,.choices.sub{grid-template-columns:repeat(2,1fr)}}
+  .choice{padding:15px 8px;text-align:center;font-weight:600}
+  .choice small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
+  .choice[aria-pressed=true]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+  .choice[aria-pressed=true] small{color:var(--accent-ink);opacity:.85}
+  .bar{height:6px;background:var(--line);border-radius:99px;overflow:hidden;margin:10px 0 18px}
+  .bar>div{height:100%;background:var(--accent);transition:width .25s}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .between{justify-content:space-between}
+  .center{justify-content:center}
+  .followup{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line)}
+  .hint{text-align:center;min-height:1.6em;margin-top:10px}
+  .err{color:var(--bad)}
+  label.consent{display:flex;gap:10px;align-items:flex-start;margin:14px 0}
+  label.consent input{margin-top:5px;width:18px;height:18px}
+  code{font:14px ui-monospace,Menlo,monospace;background:var(--bg);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+  [hidden]{display:none!important}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ───────────── consent ───────────── -->
+<section id="consent">
+  <h1>Facial Expression Study</h1>
+  <div class="card">
+    <!-- [EDIT] Replace this block with the consent text approved by your IRB. -->
+    <h2>Information and consent</h2>
+    <p>In this study you will watch short, silent videos of computer-generated talking faces and
+       judge which emotion each face expresses. The study takes about <b>10 minutes</b>.</p>
+    <ul class="sm">
+      <li>We record only your answers, response times, and your Prolific ID.
+          No personal information, audio, or video of you is collected.</li>
+      <li>Participation is voluntary. You may stop at any time by closing this page.</li>
+      <li>[EDIT] Researcher name, institution, contact e-mail, and IRB approval number.</li>
+    </ul>
+    <label class="consent"><input type="checkbox" id="agree">
+      <span>I have read the information above, I am at least 18 years old, and I agree to take part.</span></label>
+    <button class="primary" id="toIntro" disabled>Continue</button>
+  </div>
+</section>
+
+<!-- ───────────── instructions ───────────── -->
+<section id="intro" hidden>
+  <h1>Instructions</h1>
+  <div class="card">
+    <p>You will see <b id="nVideos">48</b> short videos (2–6 seconds each). The videos have <b>no sound</b>.</p>
+    <p>For each video, choose the emotion the face expresses:</p>
+    <ul>
+      <li><b>Happy</b>, <b>Sad</b>, or <b>Angry</b></li>
+      <li>If none of these fits, choose <b>None of the above</b>, and then pick the one that is
+          <b>closest</b> among Happy, Sad and Angry.</li>
+    </ul>
+    <ul class="sm muted">
+      <li>Focus on the facial expression. The mouth moves because the face is speaking; this is not an emotion by itself.</li>
+      <li>Each video plays once in full before the answer buttons unlock, then keeps looping.</li>
+      <li>There are no right or wrong answers for how you perceive a face, but please pay attention:
+          a few items ask you to select a specific button.</li>
+      <li>Please use a computer (not a phone) and do not reload the page.</li>
+    </ul>
+    <button class="primary" id="start">Start</button>
+    <p class="sm err" id="idWarn" hidden></p>
+  </div>
+</section>
+
+<!-- ───────────── trial ───────────── -->
+<section id="trial" hidden>
+  <div class="row between sm muted"><span id="count"></span></div>
+  <div class="bar"><div id="prog"></div></div>
+
+  <video id="vid" muted playsinline preload="auto"></video>
+  <div id="checkBox" class="check-box" hidden></div>
+  <div class="row center" style="margin-top:10px">
+    <button id="replay" class="sm">↻ Replay</button>
+  </div>
+  <p class="hint sm muted" id="hint"></p>
+
+  <div class="choices" id="mainChoices"></div>
+
+  <div class="followup" id="followup" hidden>
+    <p style="margin:0 0 4px"><b>Which one is the closest?</b></p>
+    <div class="choices sub" id="subChoices"></div>
+  </div>
+
+  <div class="row" style="justify-content:flex-end;margin-top:22px">
+    <button class="primary" id="next" disabled>Next →</button>
+  </div>
+</section>
+
+<!-- ───────────── submit ───────────── -->
+<section id="submit" hidden>
+  <h1 id="submitTitle">Saving your answers…</h1>
+  <div class="card">
+    <p id="submitMsg">Please keep this page open. This takes a few seconds.</p>
+    <div class="row">
+      <button class="primary" id="retry" hidden>Try again</button>
+      <a id="complete" class="primary" hidden
+         style="display:inline-block;text-decoration:none;padding:11px 18px;border-radius:9px;background:var(--accent);color:var(--accent-ink);font-weight:600">
+         Return to Prolific</a>
+    </div>
+    <p class="sm muted" id="codeNote" hidden></p>
+  </div>
+</section>
+
+</div>
+<script>
+/* ============================== CONFIG ============================== */
+const CONFIG = {
+  // Apps Script web-app URL (ends with /exec). Empty = test mode: nothing is sent.
+  SUBMIT_URL: 'https://script.google.com/macros/s/AKfycby5bd8llREaLAPOtnfEXLdDwZoKmxuhy9GjWru8NuhvW4F4AL3-hG_9Lr4LAjlqSA91/exec',
+  // Prolific completion code (Study > Completion paths > "redirect" code).
+  COMPLETION_CODE: 'CQJAMTUO',
+  VERSION: 'emote48-v1',
+};
+/* ==================================================================== */
+
+const N_VIDEOS = 48;
+const ITEMS = Array.from({length:N_VIDEOS}, (_,i)=>{
+  const id = 'v' + String(i+1).padStart(2,'0');
+  return {kind:'video', id, src:'videos/'+id+'.mp4'};
+});
+// instructed-response attention checks, inserted at ~1/3 and ~2/3
+const CHECKS = [
+  {kind:'check', id:'ac1', target:'angry', text:'Attention check:<br>please select <b>Angry</b> for this item.'},
+  {kind:'check', id:'ac2', target:'sad',   text:'Attention check:<br>please select <b>Sad</b> for this item.'},
+];
+const LABELS = [
+  {k:'happy', t:'Happy'}, {k:'sad', t:'Sad'}, {k:'angry', t:'Angry'},
+  {k:'none_of_above', t:'None of the above'},
+];
+const THREE = LABELS.slice(0,3);
+
+const $ = s => document.querySelector(s);
+const params = new URLSearchParams(location.search);
+const PID = params.get('PROLIFIC_PID') || '';
+const STUDY_ID = params.get('STUDY_ID') || '';
+const SESSION_ID = params.get('SESSION_ID') || '';
+const TEST_MODE = !CONFIG.SUBMIT_URL;
+const participant = PID || ('test_' + Math.random().toString(36).slice(2, 8));
+const KEY = 'fes_' + CONFIG.VERSION + '_' + participant;
+
+let state = null;
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY) || 'null'); }catch(e){ return null; } }
+
+/* ---------- order: shuffled per participant, reproducible from the ID ---------- */
+function hash(s){ let h=2166136261; for(const c of s){ h^=c.charCodeAt(0); h=Math.imul(h,16777619);} return h>>>0; }
+function rng(seed){ let x=seed||1; return ()=>{ x^=x<<13;x>>>=0;x^=x>>17;x^=x<<5;x>>>=0; return x/4294967296; }; }
+function makeOrder(id){
+  const r = rng(hash(id));
+  const vids = ITEMS.slice();
+  for(let i=vids.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [vids[i],vids[j]]=[vids[j],vids[i]]; }
+  const seq = vids.slice();
+  seq.splice(Math.round(N_VIDEOS*2/3), 0, CHECKS[1]);
+  seq.splice(Math.round(N_VIDEOS/3), 0, CHECKS[0]);
+  return seq;
+}
+function uuid(){
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  return 'x'.repeat(32).replace(/x/g, ()=>Math.floor(Math.random()*16).toString(16));
+}
+
+/* ---------- screens ---------- */
+function show(id){ for(const s of ['consent','intro','trial','submit']) $('#'+s).hidden = (s!==id); window.scrollTo(0,0); }
+
+$('#agree').onchange = e => { $('#toIntro').disabled = !e.target.checked; };
+$('#toIntro').onclick = () => {
+  show('intro');
+  if(!PID) { $('#idWarn').hidden=false; $('#idWarn').textContent =
+    'No Prolific ID in the URL — running as a test session (' + participant + ').' +
+    (TEST_MODE ? ' Test mode: answers will not be sent.' : ''); }
+};
+$('#start').onclick = () => {
+  if(!state){
+    state = {submission_id: uuid(), participant, seq: makeOrder(participant),
+             i: 0, resp: [], started_at: new Date().toISOString(), consent_at: new Date().toISOString()};
+    save();
+  }
+  show('trial'); buildChoices(); render();
+};
+
+/* ---------- trials ---------- */
+let cur = null;           // response being built for the current item
+let watchedOnce = false;
+function buildChoices(){
+  $('#mainChoices').innerHTML = LABELS.map(l=>`<button class="choice" data-k="${l.k}" aria-pressed="false">${l.t}</button>`).join('');
+  $('#subChoices').innerHTML = THREE.map(l=>`<button class="choice" data-sk="${l.k}" aria-pressed="false">${l.t}</button>`).join('');
+  $('#mainChoices').onclick = e => { const b=e.target.closest('[data-k]'); if(b && !b.disabled) pick(b.dataset.k); };
+  $('#subChoices').onclick  = e => { const b=e.target.closest('[data-sk]'); if(b && !b.disabled) pickSub(b.dataset.sk); };
+}
+function setLocked(locked){
+  for(const b of document.querySelectorAll('#mainChoices button, #subChoices button')) b.disabled = locked;
+}
+function render(){
+  const item = state.seq[state.i];
+  cur = {pos: state.i+1, kind: item.kind, id: item.id, choice: null, closest: null,
+         t_shown: Date.now(), t_unlocked: null, n_changes: 0, replays: 0};
+  $('#count').textContent = `${state.i+1} / ${state.seq.length}`;
+  $('#prog').style.width = (state.i/state.seq.length*100) + '%';
+  $('#followup').hidden = true;
+  $('#next').disabled = true;
+  for(const b of document.querySelectorAll('.choice')) b.setAttribute('aria-pressed','false');
+  const v = $('#vid');
+  if(item.kind === 'check'){
+    v.pause(); v.removeAttribute('src'); v.load(); v.hidden = true;
+    $('#checkBox').hidden = false; $('#checkBox').innerHTML = item.text;
+    $('#replay').hidden = true; $('#hint').textContent = '';
+    watchedOnce = true; cur.t_unlocked = Date.now(); setLocked(false);
+  } else {
+    $('#checkBox').hidden = true; v.hidden = false; $('#replay').hidden = false;
+    watchedOnce = false; setLocked(true);
+    $('#hint').textContent = 'Please watch the whole clip. The buttons unlock when it ends.';
+    v.loop = false; v.src = item.src; v.load();
+    v.play().catch(()=>{ $('#hint').textContent = 'Press ↻ Replay to start the video.'; });
+    // warm the cache for the next video
+    const nxt = state.seq.slice(state.i+1).find(s=>s.kind==='video');
+    if(nxt){ const l=document.createElement('link'); l.rel='prefetch'; l.href=nxt.src; document.head.appendChild(l); }
+  }
+}
+$('#vid').addEventListener('ended', () => {
+  const v = $('#vid');
+  if(!watchedOnce){
+    watchedOnce = true; cur.t_unlocked = Date.now(); setLocked(false);
+    $('#hint').textContent = '';
+  }
+  v.loop = true; v.play().catch(()=>{});
+});
+$('#vid').addEventListener('error', () => { $('#hint').innerHTML = '<span class="err">The video failed to load. Press ↻ Replay.</span>'; });
+$('#replay').onclick = () => {
+  const v=$('#vid'); cur.replays++;
+  if(!v.getAttribute('src')) { v.src = state.seq[state.i].src; v.load(); }
+  v.currentTime = 0; v.play().catch(()=>{});
+};
+function pressed(){
+  for(const b of $('#mainChoices').children) b.setAttribute('aria-pressed', String(b.dataset.k===cur.choice));
+  for(const b of $('#subChoices').children)  b.setAttribute('aria-pressed', String(b.dataset.sk===cur.closest));
+  $('#followup').hidden = cur.choice !== 'none_of_above';
+  $('#next').disabled = !(cur.choice && (cur.choice!=='none_of_above' || cur.closest));
+}
+function pick(k){ if(cur.choice && cur.choice!==k) cur.n_changes++; cur.choice=k; if(k!=='none_of_above') cur.closest=null; pressed(); }
+function pickSub(k){ cur.closest=k; pressed(); }
+$('#next').onclick = () => {
+  if($('#next').disabled) return;
+  const now = Date.now();
+  state.resp.push({
+    pos: cur.pos, kind: cur.kind, item_id: cur.id, choice: cur.choice, closest: cur.closest || '',
+    rt_ms: cur.t_unlocked ? now - cur.t_unlocked : '', total_ms: now - cur.t_shown,
+    replays: cur.replays, n_changes: cur.n_changes,
+  });
+  state.i++; save();
+  if(state.i >= state.seq.length) submit(); else render();
+};
+document.addEventListener('keydown', e => {
+  if($('#trial').hidden) return;
+  if(e.key==='Enter'){ $('#next').click(); return; }
+  const n = parseInt(e.key,10);
+  if(n>=1 && n<=4 && !$('#mainChoices').children[0].disabled){
+    if(cur.choice==='none_of_above' && !cur.closest && n<=3) pickSub(THREE[n-1].k);
+    else pick(LABELS[n-1].k);
+  }
+});
+
+/* ---------- submission ---------- */
+function payload(){
+  const checks = state.resp.filter(r=>r.kind==='check').map(r=>{
+    const c = CHECKS.find(x=>x.id===r.item_id); return {id:r.item_id, target:c.target, response:r.choice, pass:r.choice===c.target};
+  });
+  return {
+    version: CONFIG.VERSION, submission_id: state.submission_id,
+    prolific_pid: PID, study_id: STUDY_ID, session_id: SESSION_ID, participant: state.participant,
+    started_at: state.started_at, finished_at: state.finished_at,
+    duration_s: Math.round((new Date(state.finished_at) - new Date(state.started_at))/1000),
+    attention_passed: checks.filter(c=>c.pass).length, attention_total: checks.length,
+    user_agent: navigator.userAgent, screen: `${screen.width}x${screen.height}`,
+    trials: state.resp,
+  };
+}
+async function send(data){
+  // text/plain keeps this a "simple" request, so the browser does not send a CORS preflight
+  const res = await fetch(CONFIG.SUBMIT_URL, {method:'POST', headers:{'Content-Type':'text/plain;charset=utf-8'},
+                                              body: JSON.stringify(data)});
+  const body = await res.json();
+  if(!body.ok) throw new Error(body.error || 'server error');
+  return body;
+}
+async function submit(){
+  if(!state.finished_at){ state.finished_at = new Date().toISOString(); save(); }
+  show('submit'); $('#retry').hidden = true;
+  const data = payload();
+  if(TEST_MODE){
+    console.log('[test mode] payload', data);
+    window.__lastPayload = data;
+    $('#submitTitle').textContent = 'Test mode — nothing was sent';
+    $('#submitMsg').textContent = 'SUBMIT_URL is empty. The payload was printed to the browser console.';
+    return;
+  }
+  for(let attempt=1; attempt<=3; attempt++){
+    try{
+      $('#submitMsg').textContent = attempt===1 ? 'Please keep this page open. This takes a few seconds.'
+                                                : `Retrying (${attempt}/3)…`;
+      await send(data);
+      state.submitted = true; save();
+      done(); return;
+    }catch(err){
+      if(attempt===3){
+        $('#submitTitle').textContent = 'Your answers could not be saved yet';
+        $('#submitMsg').innerHTML = 'Please check your internet connection and press <b>Try again</b>. ' +
+          'Your answers are kept in this browser, so nothing is lost. ' +
+          '<span class="sm muted">(' + String(err.message||err).slice(0,120) + ')</span>';
+        $('#retry').hidden = false;
+      } else {
+        await new Promise(r=>setTimeout(r, 1500*attempt));
+      }
+    }
+  }
+}
+$('#retry').onclick = submit;
+function done(){
+  const url = 'https://app.prolific.com/submissions/complete?cc=' + encodeURIComponent(CONFIG.COMPLETION_CODE);
+  $('#submitTitle').textContent = 'Thank you!';
+  $('#submitMsg').textContent = 'Your answers were saved. You will be redirected to Prolific.';
+  $('#complete').href = url; $('#complete').hidden = false;
+  $('#codeNote').hidden = false;
+  $('#codeNote').innerHTML = 'If you are not redirected, use completion code <code>' + CONFIG.COMPLETION_CODE + '</code>.';
+  try{ localStorage.removeItem(KEY); }catch(e){}
+  setTimeout(()=>{ location.href = url; }, 2500);
+}
+
+/* ---------- resume after an accidental reload ---------- */
+(function init(){
+  $('#nVideos').textContent = N_VIDEOS;
+  const prev = load();
+  if(prev && prev.seq && !prev.submitted){
+    state = prev;
+    if(state.i >= state.seq.length){ submit(); return; }
+    show('trial'); buildChoices(); render();
+  }
+})();
+</script>
+</body>
+</html>
