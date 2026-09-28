@@ -121,9 +121,7 @@
 <section id="intro" hidden>
   <h1>Instructions</h1>
   <div class="card">
-    <p>You will see <b id="nVideos">48</b> short videos (2–6 seconds each, <b>no sound</b>), plus
-       2 brief attention-check items — <b id="nTotal">50</b> items in total. The item counter at
-       the top of the screen counts all of these together.</p>
+    <p>You will see <b id="nTotal">52</b> short videos (1–7 seconds each, <b>no sound</b>).</p>
     <p>For each video, choose the emotion the face expresses:</p>
     <ul>
       <li><b>Happy</b>, <b>Sad</b>, or <b>Angry</b></li>
@@ -192,7 +190,7 @@ const CONFIG = {
   SUBMIT_URL: 'https://script.google.com/macros/s/AKfycby5bd8llREaLAPOtnfEXLdDwZoKmxuhy9GjWru8NuhvW4F4AL3-hG_9Lr4LAjlqSA91/exec',
   // Prolific completion code (Study > Completion paths > "redirect" code).
   COMPLETION_CODE: 'CQJAMTUO',
-  VERSION: 'emote48-v1',
+  VERSION: 'emote52-v3',
 };
 /* ==================================================================== */
 
@@ -201,6 +199,10 @@ const ITEMS = Array.from({length:N_VIDEOS}, (_,i)=>{
   const id = 'v' + String(i+1).padStart(2,'0');
   return {kind:'video', id, src:'videos/'+id+'.mp4'};
 });
+// test-retest items: these videos are shown a second time late in the session, so each
+// participant's answer consistency can be used as a rater-quality measure
+const REPEATS = ['v19', 'v46'];
+const REPEAT_GAP = 16;          // minimum items between the two showings
 // instructed-response attention checks, inserted at ~1/3 and ~2/3
 const CHECKS = [
   {kind:'check', id:'ac1', target:'angry', text:'Attention check:<br>please select <b>Angry</b> for this item.'},
@@ -232,9 +234,30 @@ function makeOrder(id){
   const r = rng(hash(id));
   const vids = ITEMS.slice();
   for(let i=vids.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [vids[i],vids[j]]=[vids[j],vids[i]]; }
-  const seq = vids.slice();
-  seq.splice(Math.round(N_VIDEOS*2/3), 0, CHECKS[1]);
-  seq.splice(Math.round(N_VIDEOS/3), 0, CHECKS[0]);
+  // first showing of each repeated video goes in the first half
+  const half = Math.floor(N_VIDEOS/2);
+  for(const rid of REPEATS){
+    const at = vids.findIndex(v=>v.id===rid);
+    if(at >= half){
+      let j; do { j = Math.floor(r()*half); } while(REPEATS.includes(vids[j].id));
+      [vids[at],vids[j]]=[vids[j],vids[at]];
+    }
+  }
+  // second showing: late in the session, >= REPEAT_GAP items after the first, not next to each other
+  const seq = vids.slice(); const placed = [];
+  for(const rid of REPEATS){
+    const first = seq.findIndex(v=>v.id===rid);
+    const lo = Math.max(first + REPEAT_GAP, half), hi = seq.length;
+    let pos, tries = 0;
+    do { pos = lo + Math.floor(r()*(hi - lo + 1)); tries++; }
+    while(tries < 50 && placed.some(p=>Math.abs(p-pos)<=1));
+    const orig = ITEMS.find(v=>v.id===rid);
+    seq.splice(pos, 0, {kind:'repeat', id: rid + '_r', of: rid, src: orig.src});
+    placed.forEach((p,k)=>{ if(p>=pos) placed[k]=p+1; }); placed.push(pos);
+  }
+  const n = seq.length;
+  seq.splice(Math.round(n*2/3), 0, CHECKS[1]);
+  seq.splice(Math.round(n/3), 0, CHECKS[0]);
   return seq;
 }
 function uuid(){
@@ -296,7 +319,7 @@ function render(){
     v.loop = false; v.src = item.src; v.load();
     v.play().catch(()=>{ $('#hint').textContent = 'Press ↻ Replay to start the video.'; });
     // warm the cache for the next video
-    const nxt = state.seq.slice(state.i+1).find(s=>s.kind==='video');
+    const nxt = state.seq.slice(state.i+1).find(s=>s.kind!=='check');
     if(nxt){ const l=document.createElement('link'); l.rel='prefetch'; l.href=nxt.src; document.head.appendChild(l); }
   }
 }
@@ -411,8 +434,7 @@ function done(){
 
 /* ---------- resume after an accidental reload ---------- */
 (function init(){
-  $('#nVideos').textContent = N_VIDEOS;
-  $('#nTotal').textContent = N_VIDEOS + CHECKS.length;
+  $('#nTotal').textContent = N_VIDEOS + REPEATS.length + CHECKS.length;
   const prev = load();
   if(prev && prev.seq && !prev.submitted){
     state = prev;
