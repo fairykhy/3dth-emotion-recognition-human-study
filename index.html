@@ -31,7 +31,7 @@
   .check-box{max-width:500px;aspect-ratio:2/1;margin:0 auto;border-radius:10px;border:2px dashed var(--line);
     display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;font-size:18px}
   .choices{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
-  .choices.sub{grid-template-columns:repeat(3,1fr);margin-top:10px}
+  .choices.sub{grid-template-columns:repeat(4,1fr);margin-top:10px}
   @media(max-width:560px){.choices,.choices.sub{grid-template-columns:repeat(2,1fr)}}
   .choice{padding:15px 8px;text-align:center;font-weight:600}
   .choice small{display:block;font-weight:400;color:var(--muted);font-size:12px;margin-top:2px}
@@ -65,6 +65,29 @@
     text-decoration:none;font-size:14px;word-break:break-all}
   .contact-mail:hover{text-decoration:underline}
   .contact-mail svg{flex:none;width:15px;height:15px}
+  .ko{color:var(--muted);font-size:13.5px;line-height:1.55}
+  .ko-block{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}
+  .ko-block ul{margin:0;padding-left:20px}
+  .examples{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:4px 0 2px}
+  @media(max-width:620px){.examples{grid-template-columns:1fr}}
+  .example figure{margin:0}
+  .example video{width:100%;max-width:none;aspect-ratio:1/1;border-radius:9px}
+  .example figcaption{margin-top:7px;text-align:center;font-weight:700;font-size:15px}
+  .example figcaption span{display:block;font-weight:400;font-size:12.5px;color:var(--muted)}
+  #otherText{font:inherit;width:100%;padding:10px 12px;margin-top:8px;border-radius:9px;
+    border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+  #otherText:focus{outline:2px solid var(--accent);outline-offset:1px}
+  /* instructions stay reachable during the task, since trials cannot be revisited */
+  .minihelp{background:var(--card);border:1px solid var(--line);border-radius:10px;margin:0 0 14px}
+  .minihelp>summary{cursor:pointer;list-style:none;padding:10px 14px;font-size:14px;font-weight:600;
+    display:flex;align-items:center;gap:8px}
+  .minihelp>summary::-webkit-details-marker{display:none}
+  .minihelp>summary::before{content:'▸';color:var(--muted);font-weight:400}
+  .minihelp[open]>summary::before{content:'▾'}
+  .minihelp>summary .hint-tap{margin-left:auto;font-weight:400;font-size:12.5px;color:var(--muted)}
+  .minihelp-body{padding:0 14px 12px;font-size:13.5px;line-height:1.6}
+  .minihelp-body ul{margin:0;padding-left:19px}
+  .minihelp-body li{margin:3px 0}
 </style>
 </head>
 <body>
@@ -111,8 +134,24 @@
       </div>
     </div>
 
+    <div class="ko-block">
+      <p class="ko" style="margin:0 0 6px"><b>연구 설명 및 동의 (한국어)</b></p>
+      <p class="ko" style="margin:0 0 6px">이 연구에서는 AI로 생성된 3D 사람의 짧은 무음 영상을 보고,
+        각 얼굴이 어떤 감정을 표현하는지 판단하게 됩니다. 소요 시간은 약 10분입니다.</p>
+      <ul class="ko">
+        <li>수집하는 정보는 응답 내용, 응답 시간, Prolific ID 뿐입니다. 개인정보나 참여자의 음성·영상은 수집하지 않습니다.</li>
+        <li>일상적인 컴퓨터 사용 이상의 위험은 없으며, Prolific 보상 외에 직접적인 이득은 없습니다.</li>
+        <li>응답은 접근이 통제된 연구용 저장소에 보관되며 연구팀 외부에 공유되지 않습니다.
+            기관 규정에 따라 연구 종료 후 최대 3년간 보관한 뒤 폐기합니다.</li>
+        <li>참여는 자발적이며, 언제든지 페이지를 닫아 중단할 수 있고 어떠한 불이익도 없습니다.
+            중간에 그만두신 경우 해당 응답은 사용되지 않습니다.</li>
+        <li>본 연구는 KAIST 생명윤리심의위원회(IRB)의 심의를 받을 예정입니다.</li>
+      </ul>
+    </div>
+
     <label class="consent"><input type="checkbox" id="agree">
-      <span>I have read the information above, I am at least 18 years old, and I agree to take part.</span></label>
+      <span>I have read the information above, I am at least 18 years old, and I agree to take part.
+        <span class="ko" style="display:block;margin-top:3px">위 내용을 읽었으며, 만 18세 이상이고, 연구 참여에 동의합니다.</span></span></label>
     <button class="primary" id="toIntro" disabled>Continue</button>
   </div>
 </section>
@@ -125,26 +164,90 @@
     <p>For each video, choose the emotion the face expresses:</p>
     <ul>
       <li><b>Happy</b>, <b>Sad</b>, or <b>Angry</b></li>
-      <li>If none of these fits, choose <b>None of the above</b>, and then pick the one that is
-          <b>closest</b> among Happy, Sad and Angry.</li>
+      <li>If none of these fits, choose <b>None of three</b>, then pick the <b>closest</b> one.
+          If nothing is close either, choose <b>Other</b> there and type the emotion you see.</li>
     </ul>
+    <p>You <b>cannot go back</b> to a previous video once you move on, so <b>please choose carefully</b>.</p>
     <ul class="sm muted">
       <li>Focus on the facial expression. The mouth moves because the face is speaking; this is not an emotion by itself.</li>
       <li>Each video plays once in full before the answer buttons unlock, then keeps looping.</li>
-      <li>There are no right or wrong answers for how you perceive a face, but please pay attention.</li>
       <li>We recommend to use a desktop rather than a mobile device. Your progress is saved automatically, but please
           do not edit the page address or open the study in a new tab/window.</li>
     </ul>
+
+    <div class="ko-block">
+      <p class="ko" style="margin:0 0 6px"><b>안내 (한국어)</b></p>
+      <p class="ko" style="margin:0 0 6px">총 <b id="nTotalKo">52</b>개의 짧은 영상(각 1~7초, <b>소리 없음</b>)을 보게 됩니다.
+        각 영상마다 얼굴이 표현하는 감정을 골라 주세요.</p>
+      <ul class="ko">
+        <li><b>Happy(행복)</b>, <b>Sad(슬픔)</b>, <b>Angry(분노)</b> 중에서 선택합니다.</li>
+        <li>셋 중 해당하는 것이 없으면 <b>None of three(셋 다 아님)</b>를 고른 뒤, 그나마 <b>가장 가까운</b> 감정을
+            골라 주세요. 가까운 것도 없다면 거기서 <b>Other(기타)</b>를 고르고 보이는 감정을 직접 입력해 주세요.</li>
+      </ul>
+      <p class="ko" style="margin:0 0 6px">다음 문항으로 넘어가면 이전 영상으로 <b>돌아갈 수 없으니</b>, <b>신중하게 골라 주세요</b>.</p>
+      <ul class="ko">
+        <li>발화 때문에 입이 움직이는 것은 감정이 아니므로, 표정 자체에 집중해 주세요.</li>
+        <li>영상이 한 번 끝까지 재생되어야 선택 버튼이 활성화되며, 이후에는 반복 재생됩니다.</li>
+        <li>휴대폰보다 데스크톱 사용을 권장합니다. 진행 상황은 자동 저장되지만 주소를 직접 수정하거나
+            새 탭·새 창으로 열지는 말아 주세요.</li>
+      </ul>
+    </div>
+
     <div class="row between">
       <button id="backToConsent">← Back</button>
-      <button class="primary" id="start">Start</button>
+      <button class="primary" id="toExamples">Continue</button>
     </div>
     <p class="sm err" id="idWarn" hidden></p>
   </div>
 </section>
 
+<!-- ───────────── examples ───────────── -->
+<section id="examples" hidden>
+  <h1>Examples</h1>
+  <div class="card">
+    <p style="margin-bottom:4px">Here is one clear example of each emotion.
+       Watch them as many times as you like, then start.</p>
+    <p class="ko" style="margin-bottom:16px">각 감정의 명확한 예시입니다.
+       원하는 만큼 반복해서 보신 뒤 시작해 주세요.</p>
+    <div class="examples">
+      <div class="example"><figure>
+        <video src="examples/example_happy.mp4" autoplay loop muted playsinline></video>
+        <figcaption>Happy<span>행복</span></figcaption></figure></div>
+      <div class="example"><figure>
+        <video src="examples/example_sad.mp4" autoplay loop muted playsinline></video>
+        <figcaption>Sad<span>슬픔</span></figcaption></figure></div>
+      <div class="example"><figure>
+        <video src="examples/example_angry.mp4" autoplay loop muted playsinline></video>
+        <figcaption>Angry<span>분노</span></figcaption></figure></div>
+    </div>
+    <p class="sm muted" style="margin:14px 0 2px">During the study the answer emotion is not shown.</p>
+    <p class="ko" style="margin:0">본 실험에서는 정답 감정이 표시되지 않습니다.</p>
+    <div class="row between" style="margin-top:18px">
+      <button id="backToIntro">← Back</button>
+      <button class="primary" id="start">Start</button>
+    </div>
+  </div>
+</section>
+
 <!-- ───────────── trial ───────────── -->
 <section id="trial" hidden>
+  <details class="minihelp" id="miniHelp" open>
+    <summary>Instructions <span class="hint-tap">click to collapse / 접기·펼치기</span></summary>
+    <div class="minihelp-body">
+      <ul>
+        <li>Judge the <b>facial expression</b>. The mouth moves because the face is speaking; that is not an emotion.</li>
+        <li>Choose <b>Happy</b>, <b>Sad</b> or <b>Angry</b>. If none fits, choose <b>None of three</b> and then the
+            <b>closest</b> one; if nothing is close, choose <b>Other</b> there and type what you see.</li>
+        <li>Each video plays once in full before the buttons unlock, then loops. You can press ↻ Replay any time.</li>
+      </ul>
+      <ul class="ko" style="margin-top:8px">
+        <li><b>표정</b>으로 판단해 주세요. 발화 때문에 입이 움직이는 것은 감정이 아닙니다.</li>
+        <li><b>행복·슬픔·분노</b> 중에서 고르고, 해당하는 것이 없으면 <b>셋 다 아님</b>을 고른 뒤
+            <b>가장 가까운</b> 감정을 선택해 주세요. 가까운 것도 없으면 <b>기타</b>에 직접 입력해 주세요.</li>
+        <li>영상이 한 번 끝까지 재생되어야 버튼이 활성화되며, 이후 반복 재생됩니다. ↻ Replay 로 다시 볼 수 있습니다.</li>
+      </ul>
+    </div>
+  </details>
   <div class="row between sm muted"><span id="count"></span></div>
   <div class="bar"><div id="prog"></div></div>
 
@@ -158,8 +261,11 @@
   <div class="choices" id="mainChoices"></div>
 
   <div class="followup" id="followup" hidden>
-    <p style="margin:0 0 4px"><b>Which one is the closest?</b></p>
+    <p style="margin:0 0 2px"><b>Which one is the closest?</b>
+      <span class="sm muted">그나마 가장 가까운 감정</span></p>
     <div class="choices sub" id="subChoices"></div>
+    <input type="text" id="otherText" maxlength="60" autocomplete="off" hidden
+           placeholder="Which emotion do you see? / 어떤 감정으로 보이는지 적어 주세요">
   </div>
 
   <div class="row" style="justify-content:flex-end;margin-top:22px">
@@ -190,7 +296,7 @@ const CONFIG = {
   SUBMIT_URL: 'https://script.google.com/macros/s/AKfycby5bd8llREaLAPOtnfEXLdDwZoKmxuhy9GjWru8NuhvW4F4AL3-hG_9Lr4LAjlqSA91/exec',
   // Prolific completion code (Study > Completion paths > "redirect" code).
   COMPLETION_CODE: 'CQJAMTUO',
-  VERSION: 'emote52-v3',
+  VERSION: 'emote52-v5',
 };
 /* ==================================================================== */
 
@@ -209,10 +315,11 @@ const CHECKS = [
   {kind:'check', id:'ac2', target:'sad',   text:'Attention check:<br>please select <b>Sad</b> for this item.'},
 ];
 const LABELS = [
-  {k:'happy', t:'Happy'}, {k:'sad', t:'Sad'}, {k:'angry', t:'Angry'},
-  {k:'none_of_above', t:'None of the above'},
+  {k:'happy', t:'Happy', ko:'행복'}, {k:'sad', t:'Sad', ko:'슬픔'}, {k:'angry', t:'Angry', ko:'분노'},
+  {k:'none_of_three', t:'None of three', ko:'셋 다 아님'},
 ];
-const THREE = LABELS.slice(0,3);
+// the closest-match row: the three emotions plus a free-text "Other"
+const SUB = LABELS.slice(0,3).concat([{k:'other', t:'Other', ko:'기타 (직접 입력)'}]);
 
 const $ = s => document.querySelector(s);
 const params = new URLSearchParams(location.search);
@@ -266,7 +373,14 @@ function uuid(){
 }
 
 /* ---------- screens ---------- */
-function show(id){ for(const s of ['consent','intro','trial','submit']) $('#'+s).hidden = (s!==id); window.scrollTo(0,0); }
+function show(id){
+  for(const s of ['consent','intro','examples','trial','submit']) $('#'+s).hidden = (s!==id);
+  // the example clips should only play while that screen is open
+  for(const v of document.querySelectorAll('#examples video')){
+    if(id === 'examples') v.play().catch(()=>{}); else v.pause();
+  }
+  window.scrollTo(0,0);
+}
 
 $('#agree').onchange = e => { $('#toIntro').disabled = !e.target.checked; };
 $('#toIntro').onclick = () => {
@@ -276,21 +390,28 @@ $('#toIntro').onclick = () => {
     (TEST_MODE ? ' Test mode: answers will not be sent.' : ''); }
 };
 $('#backToConsent').onclick = () => show('consent');
+$('#toExamples').onclick = () => show('examples');
+$('#backToIntro').onclick = () => show('intro');
 $('#start').onclick = () => {
   if(!state){
     state = {submission_id: uuid(), participant, seq: makeOrder(participant),
-             i: 0, resp: [], started_at: new Date().toISOString(), consent_at: new Date().toISOString()};
+             i: 0, resp: [], help_open: true,
+             started_at: new Date().toISOString(), consent_at: new Date().toISOString()};
     save();
   }
-  show('trial'); buildChoices(); render();
+  show('trial'); buildChoices(); applyHelp(); render();
 };
+function applyHelp(){ $('#miniHelp').open = state.help_open !== false; }
+$('#miniHelp').addEventListener('toggle', () => {
+  if(state){ state.help_open = $('#miniHelp').open; save(); }
+});
 
 /* ---------- trials ---------- */
 let cur = null;           // response being built for the current item
 let watchedOnce = false;
 function buildChoices(){
-  $('#mainChoices').innerHTML = LABELS.map(l=>`<button class="choice" data-k="${l.k}" aria-pressed="false">${l.t}</button>`).join('');
-  $('#subChoices').innerHTML = THREE.map(l=>`<button class="choice" data-sk="${l.k}" aria-pressed="false">${l.t}</button>`).join('');
+  $('#mainChoices').innerHTML = LABELS.map(l=>`<button class="choice" data-k="${l.k}" aria-pressed="false">${l.t}<small>${l.ko}</small></button>`).join('');
+  $('#subChoices').innerHTML = SUB.map(l=>`<button class="choice" data-sk="${l.k}" aria-pressed="false">${l.t}<small>${l.ko}</small></button>`).join('');
   $('#mainChoices').onclick = e => { const b=e.target.closest('[data-k]'); if(b && !b.disabled) pick(b.dataset.k); };
   $('#subChoices').onclick  = e => { const b=e.target.closest('[data-sk]'); if(b && !b.disabled) pickSub(b.dataset.sk); };
 }
@@ -299,8 +420,9 @@ function setLocked(locked){
 }
 function render(){
   const item = state.seq[state.i];
-  cur = {pos: state.i+1, kind: item.kind, id: item.id, choice: null, closest: null,
+  cur = {pos: state.i+1, kind: item.kind, id: item.id, choice: null, closest: null, other_text: '',
          t_shown: Date.now(), t_unlocked: null, n_changes: 0, replays: 0};
+  $('#otherText').value = '';
   $('#count').textContent = `${state.i+1} / ${state.seq.length}`;
   $('#prog').style.width = (state.i/state.seq.length*100) + '%';
   $('#followup').hidden = true;
@@ -315,9 +437,11 @@ function render(){
   } else {
     $('#checkBox').hidden = true; v.hidden = false; $('#replay').hidden = false;
     watchedOnce = false; setLocked(true);
-    $('#hint').textContent = 'Please watch the whole clip. The buttons unlock when it ends.';
+    $('#hint').innerHTML = 'Please watch the whole clip. The buttons unlock when it ends.' +
+      '<span class="ko" style="display:block">영상을 끝까지 봐 주세요. 재생이 끝나면 선택 버튼이 활성화됩니다.</span>';
     v.loop = false; v.src = item.src; v.load();
-    v.play().catch(()=>{ $('#hint').textContent = 'Press ↻ Replay to start the video.'; });
+    v.play().catch(()=>{ $('#hint').innerHTML = 'Press ↻ Replay to start the video.' +
+      '<span class="ko" style="display:block">↻ Replay 를 눌러 영상을 재생해 주세요.</span>'; });
     // warm the cache for the next video
     const nxt = state.seq.slice(state.i+1).find(s=>s.kind!=='check');
     if(nxt){ const l=document.createElement('link'); l.rel='prefetch'; l.href=nxt.src; document.head.appendChild(l); }
@@ -331,7 +455,9 @@ $('#vid').addEventListener('ended', () => {
   }
   v.loop = true; v.play().catch(()=>{});
 });
-$('#vid').addEventListener('error', () => { $('#hint').innerHTML = '<span class="err">The video failed to load. Press ↻ Replay.</span>'; });
+$('#vid').addEventListener('error', () => { $('#hint').innerHTML =
+  '<span class="err">The video failed to load. Press ↻ Replay.</span>' +
+  '<span class="ko err" style="display:block">영상을 불러오지 못했습니다. ↻ Replay 를 눌러 주세요.</span>'; });
 $('#replay').onclick = () => {
   const v=$('#vid'); cur.replays++;
   if(!v.getAttribute('src')) { v.src = state.seq[state.i].src; v.load(); }
@@ -340,16 +466,32 @@ $('#replay').onclick = () => {
 function pressed(){
   for(const b of $('#mainChoices').children) b.setAttribute('aria-pressed', String(b.dataset.k===cur.choice));
   for(const b of $('#subChoices').children)  b.setAttribute('aria-pressed', String(b.dataset.sk===cur.closest));
-  $('#followup').hidden = cur.choice !== 'none_of_above';
-  $('#next').disabled = !(cur.choice && (cur.choice!=='none_of_above' || cur.closest));
+  $('#followup').hidden = cur.choice !== 'none_of_three';
+  $('#otherText').hidden = !(cur.choice === 'none_of_three' && cur.closest === 'other');
+  // 'None of three' needs a closest; if that closest is 'Other', it also needs the typed emotion
+  const needText = cur.closest === 'other';
+  $('#next').disabled = !(cur.choice && (cur.choice !== 'none_of_three'
+      || (cur.closest && (!needText || cur.other_text.trim().length >= 2))));
 }
-function pick(k){ if(cur.choice && cur.choice!==k) cur.n_changes++; cur.choice=k; if(k!=='none_of_above') cur.closest=null; pressed(); }
-function pickSub(k){ cur.closest=k; pressed(); }
+function pick(k){
+  if(cur.choice && cur.choice!==k) cur.n_changes++;
+  cur.choice=k;
+  if(k!=='none_of_three'){ cur.closest=null; cur.other_text=''; $('#otherText').value=''; }
+  pressed();
+}
+function pickSub(k){
+  cur.closest=k;
+  if(k!=='other'){ cur.other_text=''; $('#otherText').value=''; }
+  pressed();
+  if(k==='other') setTimeout(()=>$('#otherText').focus(), 0);
+}
+$('#otherText').addEventListener('input', e => { cur.other_text = e.target.value; pressed(); });
 $('#next').onclick = () => {
   if($('#next').disabled) return;
   const now = Date.now();
   state.resp.push({
     pos: cur.pos, kind: cur.kind, item_id: cur.id, choice: cur.choice, closest: cur.closest || '',
+    other_text: (cur.other_text || '').trim(),
     rt_ms: cur.t_unlocked ? now - cur.t_unlocked : '', total_ms: now - cur.t_shown,
     replays: cur.replays, n_changes: cur.n_changes,
   });
@@ -358,10 +500,11 @@ $('#next').onclick = () => {
 };
 document.addEventListener('keydown', e => {
   if($('#trial').hidden) return;
+  if(e.target === $('#otherText')){ if(e.key==='Enter') $('#next').click(); return; }
   if(e.key==='Enter'){ $('#next').click(); return; }
   const n = parseInt(e.key,10);
   if(n>=1 && n<=4 && !$('#mainChoices').children[0].disabled){
-    if(cur.choice==='none_of_above' && !cur.closest && n<=3) pickSub(THREE[n-1].k);
+    if(cur.choice==='none_of_three' && !cur.closest && n<=4) pickSub(SUB[n-1].k);
     else pick(LABELS[n-1].k);
   }
 });
@@ -435,11 +578,12 @@ function done(){
 /* ---------- resume after an accidental reload ---------- */
 (function init(){
   $('#nTotal').textContent = N_VIDEOS + REPEATS.length + CHECKS.length;
+  $('#nTotalKo').textContent = N_VIDEOS + REPEATS.length + CHECKS.length;
   const prev = load();
   if(prev && prev.seq && !prev.submitted){
     state = prev;
     if(state.i >= state.seq.length){ submit(); return; }
-    show('trial'); buildChoices(); render();
+    show('trial'); buildChoices(); applyHelp(); render();
   }
 })();
 </script>
