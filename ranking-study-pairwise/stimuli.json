@@ -1,0 +1,177 @@
+{
+  "videos": [
+    "v001",
+    "v002",
+    "v003",
+    "v004",
+    "v005",
+    "v006",
+    "v007",
+    "v008",
+    "v009",
+    "v010",
+    "v011",
+    "v012",
+    "v013",
+    "v014",
+    "v015",
+    "v016",
+    "v017",
+    "v018",
+    "v019",
+    "v020",
+    "v021",
+    "v022",
+    "v023",
+    "v024",
+    "v025",
+    "v026",
+    "v027"
+  ],
+  "groups": [
+    {
+      "id": "p01",
+      "target": "happy",
+      "videos": [
+        "v020",
+        "v014"
+      ]
+    },
+    {
+      "id": "p02",
+      "target": "happy",
+      "videos": [
+        "v020",
+        "v009"
+      ]
+    },
+    {
+      "id": "p03",
+      "target": "happy",
+      "videos": [
+        "v023",
+        "v002"
+      ]
+    },
+    {
+      "id": "p04",
+      "target": "happy",
+      "videos": [
+        "v023",
+        "v008"
+      ]
+    },
+    {
+      "id": "p05",
+      "target": "angry",
+      "videos": [
+        "v021",
+        "v012"
+      ]
+    },
+    {
+      "id": "p06",
+      "target": "angry",
+      "videos": [
+        "v021",
+        "v025"
+      ]
+    },
+    {
+      "id": "p07",
+      "target": "angry",
+      "videos": [
+        "v010",
+        "v022"
+      ]
+    },
+    {
+      "id": "p08",
+      "target": "angry",
+      "videos": [
+        "v010",
+        "v015"
+      ]
+    },
+    {
+      "id": "p09",
+      "target": "angry",
+      "videos": [
+        "v001",
+        "v006"
+      ]
+    },
+    {
+      "id": "p10",
+      "target": "angry",
+      "videos": [
+        "v001",
+        "v024"
+      ]
+    },
+    {
+      "id": "p11",
+      "target": "sad",
+      "videos": [
+        "v018",
+        "v011"
+      ]
+    },
+    {
+      "id": "p12",
+      "target": "sad",
+      "videos": [
+        "v018",
+        "v004"
+      ]
+    },
+    {
+      "id": "p13",
+      "target": "sad",
+      "videos": [
+        "v007",
+        "v003"
+      ]
+    },
+    {
+      "id": "p14",
+      "target": "sad",
+      "videos": [
+        "v007",
+        "v016"
+      ]
+    },
+    {
+      "id": "p15",
+      "target": "sad",
+      "videos": [
+        "v013",
+        "v027"
+      ]
+    },
+    {
+      "id": "p16",
+      "target": "sad",
+      "videos": [
+        "v013",
+        "v026"
+      ]
+    },
+    {
+      "id": "p17",
+      "target": "happy",
+      "videos": [
+        "v019",
+        "v005"
+      ]
+    },
+    {
+      "id": "p18",
+      "target": "happy",
+      "videos": [
+        "v019",
+        "v017"
+      ]
+    }
+  ]
+}
